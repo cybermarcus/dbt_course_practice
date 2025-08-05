@@ -1,8 +1,8 @@
 {{
   config(
-    materialized = 'incremental',
-    incremental_strategy = 'append'
-    )
+    materialized = 'table',
+    tags = ['bookings']
+  )
 }}
 SELECT
     book_ref,
@@ -10,7 +10,4 @@ SELECT
     total_amount    
 FROM
   {{ source('demo_src', 'bookings') }}
-{% if is_incremental() %}
-WHERE
-  book_ref > (SELECT MAX(book_ref) FROM {{ this }})
-{% endif %}
+{{ limit_data_dev('book_date', 3000)}}
